@@ -1,5 +1,5 @@
 <?php
-
+  //chatbot using php using github and heroku
 $method = $_SERVER['REQUEST_METHOD'];
 
 if($method == 'POST')
