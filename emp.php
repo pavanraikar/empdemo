@@ -1,22 +1,45 @@
+<?php 
+$method = $_SERVER['REQUEST_METHOD'];
 
-<?php
-$input = json_decode(file_get_contents('php://input'), true);
-$messageId = $input['result']['resolvedQuery'];
-$text = print_r($input,true);
-file_put_contents('output.txt', var_export($text, TRUE));
-$url = "https://autoremotejoaomgcd.appspot.com/sendmessage?key=APAue83jLrt7xFeQoGjgKq&message=" . $messageId;  
+// Process only when method is POST
+if($method == 'POST')
+{
+$requestBody = file_get_contents('php://input');
+$json = json_decode($requestBody);
 
-    $data = array("result" => "resolvedQuery");
-    $ch = curl_init($url);
-    $data_string = json_encode($messageId);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_setopt($ch, CURLOPT_POSTFIELDS, array("resolvedQuery"=>$data_string));
-    curl_setopt($ch, CURLOPT_HEADER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER,
-               array('Content-Type:application/json',
-                      'Content-Length: ' . strlen($data_string))
-               );
+$equis = $json->result->parameters->equis;
 
-    $result = curl_exec($ch);
-    curl_close($ch);
+switch ($equis) {
+    case 'hi':
+        $speech = "Hi, Nice to meet you";
+
+        break;
+
+    case 'bye':
+        $speech = "Bye, good night";
+        break;
+
+    case 'anything':
+        $speech = "Yes, you can type anything here.";
+        break;
+
+    default:
+        $speech = "Sorry, I didnt get that. Please ask me something 
+else.";
+        break;
+}
+
+
+$response = new \stdClass();
+$response->speech = $speech;
+$response->displayText = $speech;
+$response->source = "Alex";
+
+echo json_encode($response);
+}
+else
+{
+echo "Method not allowed";
+}
+
 ?>
